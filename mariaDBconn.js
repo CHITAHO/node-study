@@ -41,9 +41,11 @@ async function PostUserList(name){
 async function PutUserList(age,name){
     let conn, rows;
     var sql = 'update NewTable set age=? where name=?';
+    var params = [age,name];
+    
     try{
         conn = await pool.getConnection();
-        await conn.query(sql,[age,name]);
+        await conn.query(sql,params);
         rows = 'Update Success';
     }
     catch(err){
@@ -86,12 +88,13 @@ async function GetMember(){
         return rows;
     }
 }
-async function PostMember(id){
+async function PostMember(id,pw,name,email){
     let conn, rows;
-    var sql = 'SELECT * FROM member WHERE id=?';
+    var sql = 'insert into member (id,pw,name,email) values(?,?,?,?)';
+    var params = [id,pw,name,email];
     try{
         conn = await pool.getConnection();
-        rows = await conn.query(sql,[id]);
+        rows = await conn.query(sql,params);
     }
     catch(err){
         throw err;
@@ -104,9 +107,10 @@ async function PostMember(id){
 async function PutMember(id,name){
     let conn, rows;
     var sql = 'update member set id=? where name=?';
+    var params = [id,name];
     try{
         conn = await pool.getConnection();
-        await conn.query(sql,[id,name]);
+        await conn.query(sql,params);
         rows = 'Update Success';
     }
     catch(err){
@@ -117,12 +121,13 @@ async function PutMember(id,name){
         return rows;
     }
 }
-async function DeleteMember(age){
+async function DeleteMember(id){
     let conn, rows;
-    var sql = 'delete from member where age=?';
+    var sql = 'delete from member where id=?';
+    var params = [id];
     try{
         conn = await pool.getConnection();
-        await conn.query(sql,[age]);
+        await conn.query(sql,params);
         rows = 'Delete Success';
     }
     catch(err){

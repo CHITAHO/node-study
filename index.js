@@ -32,7 +32,7 @@ app.get('/' , (req , res)=>{
 
 app.post('/' , (req , res)=>{
    mdbConn.postUserList(req.body.name)
-   mdbConn.postMember(req.body.id)
+   mdbConn.postMember(req.body.id,req.body.pw,req.body.name,req.body.email)
    .then((rows) => {
       res.send(rows);
    })
@@ -56,6 +56,7 @@ app.put('/' , (req , res)=>{
 })
 app.delete('/' , (req , res)=>{
    mdbConn.deleteUserList(req.body.age)
+   mdbConn.deleteMember(req.body.id)
    .then((rows) => {
       res.send(rows);
    })
