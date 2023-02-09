@@ -101,12 +101,12 @@ async function PostMember(id){
         return rows;
     }
 }
-async function PutMember(age,name){
+async function PutMember(id,name){
     let conn, rows;
-    var sql = 'update member set age=? where name=?';
+    var sql = 'update member set id=? where name=?';
     try{
         conn = await pool.getConnection();
-        await conn.query(sql,[age,name]);
+        await conn.query(sql,[id,name]);
         rows = 'Update Success';
     }
     catch(err){

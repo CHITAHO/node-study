@@ -44,6 +44,7 @@ app.post('/' , (req , res)=>{
 })
 app.put('/' , (req , res)=>{
    mdbConn.putUserList(req.body.age,req.body.name)
+   mdbConn.putMember(req.body.id,req.body.name)
    .then((rows) => {
       res.send(rows);
    })
