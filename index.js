@@ -32,6 +32,7 @@ app.get('/' , (req , res)=>{
 
 app.post('/' , (req , res)=>{
    mdbConn.postUserList(req.body.name)
+   mdbConn.postMember(req.body.id)
    .then((rows) => {
       res.send(rows);
    })
@@ -42,7 +43,6 @@ app.post('/' , (req , res)=>{
 
 })
 app.put('/' , (req , res)=>{
-   console.log(req.body.name)
    mdbConn.putUserList(req.body.age,req.body.name)
    .then((rows) => {
       res.send(rows);

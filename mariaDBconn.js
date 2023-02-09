@@ -70,12 +70,78 @@ async function DeleteUserList(age){
         return rows;
     }
 }
-
+/////////////////////////////////////////////////////////////////
+async function GetMember(){
+    let conn, rows;
+    var sql ='SELECT * FROM member';
+    try{
+        conn = await pool.getConnection();
+        rows = await conn.query(sql);
+    }
+    catch(err){
+        throw err;
+    }
+    finally{
+        if (conn) conn.end();
+        return rows;
+    }
+}
+async function PostMember(id){
+    let conn, rows;
+    var sql = 'SELECT * FROM member WHERE id=?';
+    try{
+        conn = await pool.getConnection();
+        rows = await conn.query(sql,[id]);
+    }
+    catch(err){
+        throw err;
+    }
+    finally{
+        if (conn) conn.end();
+        return rows;
+    }
+}
+async function PutMember(age,name){
+    let conn, rows;
+    var sql = 'update member set age=? where name=?';
+    try{
+        conn = await pool.getConnection();
+        await conn.query(sql,[age,name]);
+        rows = 'Update Success';
+    }
+    catch(err){
+        throw err;
+    }
+    finally{
+        if (conn) conn.end();
+        return rows;
+    }
+}
+async function DeleteMember(age){
+    let conn, rows;
+    var sql = 'delete from member where age=?';
+    try{
+        conn = await pool.getConnection();
+        await conn.query(sql,[age]);
+        rows = 'Delete Success';
+    }
+    catch(err){
+        throw err;
+    }
+    finally{
+        if (conn) conn.end();
+        return rows;
+    }
+}
  
 module.exports = {
     getUserList: GetUserList,
     postUserList: PostUserList,
     putUserList: PutUserList,
-    deleteUserList: DeleteUserList
+    deleteUserList: DeleteUserList,
+    getMember: GetMember,
+    postMember: PostMember,
+    putMember: PutMember,
+    deleteMember: DeleteMember,
 
 }
