@@ -1,4 +1,5 @@
 const mdbConn = require('./mariaDBConn.js')
+require('./crypto.js');
 const express = require('express')
 const app = express()
 

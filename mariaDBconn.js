@@ -1,5 +1,6 @@
+const salt = require('./util/salt_maker.js')
 const mariadb = require('mariadb');
- 
+const BcryptPW = require('./util/salt_maker.js');
 const pool = mariadb.createPool({
     host: 'ec2-13-124-249-74.ap-northeast-2.compute.amazonaws.com',
     port: 3306,
@@ -8,7 +9,7 @@ const pool = mariadb.createPool({
     database: 'study_db',
     connectionLimit: 5
 });
- 
+
 async function GetUserList(){
     let conn, rows;
     try{
@@ -89,9 +90,13 @@ async function GetMember(){
     }
 }
 async function PostMember(id,pw,name,email){
+    const bcryptPW = new BcryptPW();
+    let salt = bcryptPW.saltMaker();
+    let cpw= bcryptPW.passwordHashMaker(pw,salt);
+    // console.log(salt)
     let conn, rows;
-    var sql = 'insert into member (id,pw,name,email) values(?,?,?,?)';
-    var params = [id,pw,name,email];
+    var sql = 'insert into member (id,pw,salt,name,email) values(?,?,?,?,?)';
+    var params = [id,cpw,salt,name,email];
     try{
         conn = await pool.getConnection();
         rows = await conn.query(sql,params);
@@ -101,11 +106,12 @@ async function PostMember(id,pw,name,email){
     }
     finally{
         if (conn) conn.end();
-        return rows;
+        return "success";
     }
 }
 async function PutMember(id,name){
     let conn, rows;
+
     var sql = 'update member set id=? where name=?';
     var params = [id,name];
     try{
@@ -138,7 +144,8 @@ async function DeleteMember(id){
         return rows;
     }
 }
- 
+
+
 module.exports = {
     getUserList: GetUserList,
     postUserList: PostUserList,
