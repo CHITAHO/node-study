@@ -4,8 +4,8 @@ const BcryptPW = require('./util/salt_maker.js');
 const pool = mariadb.createPool({
     host: 'ec2-13-124-249-74.ap-northeast-2.compute.amazonaws.com',
     port: 3306,
-    user: 'root',
-    password: 'root',
+    user: 'chitaho',
+    password: 'mindone!23',
     database: 'study_db',
     connectionLimit: 5
 });
@@ -17,6 +17,7 @@ async function GetUserList(){
         rows = await conn.query('SELECT * FROM NewTable');
     }
     catch(err){
+        if (conn) conn.end();
         throw err;
     }
     finally{
@@ -32,6 +33,7 @@ async function PostUserList(name){
         rows = await conn.query(sql,[name]);
     }
     catch(err){
+        if (conn) conn.end();
         throw err;
     }
     finally{
@@ -50,6 +52,7 @@ async function PutUserList(age,name){
         rows = 'Update Success';
     }
     catch(err){
+        if (conn) conn.end();
         throw err;
     }
     finally{
@@ -66,6 +69,7 @@ async function DeleteUserList(age){
         rows = 'Delete Success';
     }
     catch(err){
+        if (conn) conn.end();
         throw err;
     }
     finally{
@@ -74,19 +78,23 @@ async function DeleteUserList(age){
     }
 }
 /////////////////////////////////////////////////////////////////
-async function GetMember(){
-    let conn, rows;
+async function GetMember(id){
+    let conn, row;
     var sql ='SELECT * FROM member';
+    if(id != undefined){
+        sql += ' where id=' + id + ' limit 1';
+    }
     try{
         conn = await pool.getConnection();
-        rows = await conn.query(sql);
+        row = await conn.query(sql);
     }
     catch(err){
+        if (conn) conn.end();
         throw err;
     }
     finally{
         if (conn) conn.end();
-        return rows;
+        return row;
     }
 }
 async function PostMember(id,pw,name,email){
@@ -102,6 +110,7 @@ async function PostMember(id,pw,name,email){
         rows = await conn.query(sql,params);
     }
     catch(err){
+        if (conn) conn.end();
         throw err;
     }
     finally{
@@ -120,6 +129,7 @@ async function PutMember(id,name){
         rows = 'Update Success';
     }
     catch(err){
+        if (conn) conn.end();
         throw err;
     }
     finally{
@@ -137,6 +147,7 @@ async function DeleteMember(id){
         rows = 'Delete Success';
     }
     catch(err){
+        if (conn) conn.end();
         throw err;
     }
     finally{

@@ -1,6 +1,9 @@
 const mdbConn = require('./mariaDBConn.js')
 require('./crypto.js');
-const express = require('express')
+const jwtjs = require('./jwt.js');
+const express = require('express');
+const BcryptPW = require('./util/salt_maker.js');
+const { getMember } = require('./mariaDBConn.js');
 const app = express()
 
 app.use(express.json())
@@ -32,7 +35,7 @@ app.get('/' , (req , res)=>{
 })
 
 app.post('/' , (req , res)=>{
-   mdbConn.postUserList(req.body.name)
+   // mdbConn.postUserList(req.body.name)
    mdbConn.postMember(req.body.id,req.body.pw,req.body.name,req.body.email)
    .then((rows) => {
       res.send(rows);
@@ -40,6 +43,9 @@ app.post('/' , (req , res)=>{
     .catch((errMsg) => {
       console.log(errMsg);
     });
+    let jwt = jwtjs.makeJsonWebToken(req.body,'top secret');
+    console.log(jwt);
+    jwtjs.parseJsonWebToken(jwt,'top secret');
    // res.send('post hello from simple server :)'+req.body.data)
 
 })
@@ -67,6 +73,31 @@ app.delete('/' , (req , res)=>{
    // res.send('delete hello from simple server :)')
 
 })
+app.post('/login' , (req , res)=>{
+   const bcryptPW = new BcryptPW();
+   getMember(req.body.id)
+   .then((row) => {
+      console.log(row);
+      try{
+      const pass = bcryptPW.passwordCompare(req.body.pw,row[0].pw);
+      console.log(pass);
+      if(pass == true){
+         let jwt = jwtjs.makeJsonWebToken({name : row[0].name,email : row[0].email},'top secret');
+         res.send(jwt);
+      }
+      else{
+         res.status(401).send("password not correct");
+      }
+   }
+   catch(e){
+      console.log(e);
+   }
+   })
+    .catch((errMsg) => {
+      console.log(errMsg);
+    });
+   // res.send('post hello from simple server :)'+req.body.data)
 
+})
 
 app.listen(port , ()=> console.log('> Server is up and running on port : ' + port))
